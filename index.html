@@ -1,11 +1,1050 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programação</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: Arial, sans-serif;
+            height:100vh;
+            width:100%;
+
+            /* imagem de fundo */
+            background-image: url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop');
+
+            background-position:center;
+            background-size:cover;
+            background-repeat:no-repeat;
+
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+        /* camada escura */
+        body::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:rgba(0,0,0,0.6);
+            z-index:-1;
+        }
+
+        .tema{
+            color:white;
+            padding:20px;
+            text-align:center;
+            backdrop-filter: blur(5px);
+            border-bottom: 3px solid white;
+            flex-shrink: 0;
+        }
+        #catalogo{
+            color: white;
+            padding: 5px;
+            padding-top: 48px; /* espaço para o botão fechar */
+            backdrop-filter: blur(5px);
+            width: 250px;
+            height: 100vh;
+            margin-left: -250px;
+            border-right: 2px solid white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            overflow-y: auto;
+
+            transition: all 0.3s ease;
+        }
+        .conteudo {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        /* menu */
+        .menu{
+            position:absolute;
+            top:25px;
+            left:20px;
+            z-index:1;
+            font-size: 18px;
+        }
+        .menu a{
+            color:white;
+            text-decoration:none;
+            background:rgba(0,0,0,0.6);
+            padding:10px 10px;
+            border-radius:5px;
+            border: 2px solid white;
+        }
+        .lingua {
+            position:fixed;
+            top:25px;
+            right:20px;
+            z-index:200;
+            color:white;
+            font-size:14px;
+        }
+        .lingua label {
+            display:block;
+            margin-bottom:4px;
+            color:white;
+        }
+        .lingua select {
+            width:220px;
+            padding:8px 10px;
+            border-radius:6px;
+            border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.65);
+            color: white;
+        }
+        .lingua select option {
+            background: #111;
+            color: white;
+        }
+        /*fechar menu*/
+        .fechar{
+            margin-left: 0px;
+        }
+        .fechar-menu{
+            position:absolute;
+            top:18px; /* alinhado com o título */
+            right:12px;
+            z-index: 110;
+        }
+        .fechar-menu a{
+            color:white;
+            text-decoration:none;
+            padding:6px;
+            border-radius:6px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: rgba(0,0,0,0.35);
+            border: none;
+            box-shadow: none;
+        }
+        #catalogo a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:10px 10px;
+            border-radius:5px;
+            border: 2px solid white;
+            margin: 5px 0;
+        }
+        #catalogo h3{
+            margin: 8px 0 12px 8px;
+            padding: 0;
+        }
+
+        #catalogo ul{
+            list-style: none;
+            margin: 0;
+            padding: 0 8px 16px 8px;
+        }
+        #catalogo a:hover{
+            background:rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            padding: 10px 5px;
+        }
+        .videos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .video-item {
+            position: relative;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.22);
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            z-index: 2;
+        }
+        .video-overlay:hover {
+            background: rgba(0, 0, 0, 0.35);
+        }
+        .video-item:hover {
+            transform: scale(1.05);
+        }
+        .video-item iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+        .video-title {
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .video-actions {
+            text-align: center;
+            padding: 10px;
+        }
+        .video-actions button {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .video-actions button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .default-message {
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 18px;
+        }
+        .history-panel {
+            margin-top: 24px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 16px;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .history-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .history-header button {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .history-panel {
+            margin-top: 24px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 16px;
+            display: none;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .history-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .history-header button {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .history-list {
+            margin-top: 16px;
+            display: grid;
+            gap: 10px;
+        }
+        .history-item {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        .history-item span {
+            color: white;
+            font-size: 14px;
+        }
+        .history-empty {
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 16px 8px;
+        }
+        .catalog-history {
+            margin-top: 16px;
+            padding: 0 8px 16px 8px;
+        }
+        .catalog-history h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+        .catalog-history a {
+            display: inline-block;
+            color:white;
+            text-decoration:none;
+            padding: 10px 10px;
+            border-radius:5px;
+            border: 2px solid white;
+            margin: 0;
+        }
+        /* Mobile responsivo */
+        @media (max-width: 768px) {
+            .tema {
+                padding: 15px;
+            }
+             .lingua {
+                position: fixed;
+                top: 25px;
+                right: 20px;
+                z-index: 200;
+                font-size: 14px;
+                width: auto;
+            }
+            .lingua select {
+                width: auto;
+                min-width: 90px;
+            }
+            .tema h1 {
+                font-size: 24px;
+            }
+
+            .menu {
+                top: 15px;
+                left: 10px;
+                font-size: 16px;
+            }
+
+            .menu a {
+                padding: 8px 8px;
+            }
+
+            #catalogo {
+                width: 200px;
+                margin-left: -200px;
+                padding-top: 56px; /* ajustar espaço em tablets */
+            }
+
+            .fechar-menu {
+                top: 16px;
+                right: 15px;
+            }
+
+            .fechar-menu a {
+                padding: 8px 8px;
+                font-size: 18px;
+                border: none;
+                box-shadow: none;
+            }
+
+            .conteudo {
+                padding: 15px;
+            }
+
+            .videos-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .video-item iframe {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                height: 100dvh;
+            }
+            .lingua {
+                position: static;
+                top: auto;
+                right: auto;
+                z-index: auto;
+                width: 100%;
+                margin-bottom: 14px;
+            }
+            .lingua select {
+                width: 100%;
+                min-width: auto;
+            }
+            .tema {
+                padding: 12px;
+            }
+
+            .tema h1 {
+                font-size: 20px;
+            }
+
+            .menu {
+                top: 12px;
+                left: 8px;
+                font-size: 14px;
+            }
+
+            .menu a {
+                padding: 6px 6px;
+            }
+
+            #catalogo {
+                width: 180px;
+                margin-left: -180px;
+                padding-top: 52px; /* ajustar espaço em celulares */
+               
+            }
+
+            .fechar-menu {
+                top: 8px;
+                right: 12px;
+            }
+
+            .fechar-menu a {
+                padding: 6px 6px;
+                font-size: 16px;
+                border: none;
+                box-shadow: none;
+            }
+
+            .conteudo {
+                padding: 12px;
+            }
+
+            .videos-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .video-item iframe {
+                height: 180px;
+            }
+
+            .video-title {
+                font-size: 12px;
+            }
+
+            .default-message {
+                font-size: 14px;
+                padding: 20px 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <img src="https://png.pngtree.com/thumb_back/fh260/background/20250306/pngtree-a-hand-writing-code-on-digital-interface-with-glowing-connections-symbolizing-image_17075797.jpg" alt="Programação">
+
+    <nav class="tema">
+        <h1>Programação</h1>
+    </nav>
+    <!--linguagem-->
+    <div class="lingua">
+        <select name="country" id="countrySelect">
+            <option value="">Selecione um país</option>
+        </select>
+    </div>
+    <!--menu-->
+    <div class="menu">
+        <a href="#">
+            <span>menu</span>
+        </a>
+    </div>
+    <!-- Catalogo -->
+    <nav id="catalogo">
+        <div class="fechar-menu">
+            <a href="#">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+        <h3>Catalogo</h3>
+        
+        <!-- Adicione os itens do catálogo aqui -->
+        <ul>
+            <li><a href="#" data-lang="python">Python</a></li>
+            <li><a href="#" data-lang="javascript">JavaScript</a></li>
+            <li><a href="#" data-lang="java">Java</a></li>
+            <li><a href="#" data-lang="csharp">C#</a></li>
+            <li><a href="#" data-lang="cpp">C++</a></li>
+            <li><a href="#" data-lang="ruby">Ruby</a></li>
+            <li><a href="#" data-lang="go">Go</a></li>
+            <li><a href="#" data-lang="swift">Swift</a></li>
+            <li><a href="#" data-lang="kotlin">Kotlin</a></li>
+        </ul>
+        <div class="catalog-history">
+            <h3>Histórico</h3>
+            <a href="#" data-lang="history">Ver histórico</a>
+        </div>
+    </nav>
+    
+    <!-- Área de conteúdo com vídeos -->
+    <div class="conteudo">
+        <div class="default-message">
+            Selecione uma linguagem no menu para ver vídeos
+        </div>
+        <div class="videos-container" id="videosContainer" style="display:none;"></div>
+        <div class="history-panel">
+            <div class="history-header">
+                <h3>Histórico</h3>
+                <button id="clearHistory" type="button">Limpar histórico</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="history-empty">Nenhum vídeo assistido ainda.</div>
+            </div>
+        </div>
+    </div>
+    <!--script-->
+    <script>
+        // Base de dados de vídeos por linguagem (fallback local)
+        const videos = {
+            python: [
+                { id: 'rfscVS0vtik', title: 'Python para Iniciantes' },
+                { id: 'kqtZJa2I3PE', title: 'Python Avançado' },
+                { id: 'BYrqzhCbCqU', title: 'Python 3 Completo' }
+            ],
+            javascript: [
+                { id: 'WZcxJGmLbSo', title: 'JavaScript Completo' },
+                { id: 'jS4aFq5-91M', title: 'JavaScript Moderno (ES6+)' },
+                { id: 'PkZNo7MFNFg', title: 'JavaScript para Web' }
+            ],
+            java: [
+                { id: 'grEKMHGYyog', title: 'Java para Iniciantes' },
+                { id: 'PBMV8ibq5AU', title: 'Java POO Completo' },
+                { id: 'xk4_1bqtn4Q', title: 'Java Avançado' }
+            ],
+            csharp: [
+                { id: '68z1sHo82s8', title: 'C# Básico' },
+                { id: 'r_7tfmxE-4E', title: 'C# Intermediário' },
+                { id: 'kqZrNeFSG0s', title: 'C# para Iniciantes' }
+            ],
+            cpp: [
+                { id: 'tOAst_yNMhY', title: 'C++ para Iniciantes' },
+                { id: 'vLnPJ-mKVpM', title: 'C++ Intermediário' },
+                { id: '9uLaMX097uI', title: 'C++ Tutorial Completo' }
+            ],
+            ruby: [
+                { id: '8wZ2FDVNuFg', title: 'Ruby para Iniciantes' },
+                { id: 'qRT2R8Jbturn', title: 'Ruby on Rails' },
+                { id: 'f5lrWCC6HE0', title: 'Ruby Completo' }
+            ],
+            go: [
+                { id: 'un6CRUMY_IQ', title: 'Go para Iniciantes' },
+                { id: 'C8kU8nAmLOE', title: 'Go Intermediário' },
+                { id: 'YS4e4q7f5R8', title: 'Google Go Lang Completo' }
+            ],
+            swift: [
+                { id: 'CjRu8tyG5kw', title: 'Swift para Iniciantes' },
+                { id: 'comQgQ81dyz', title: 'Swift Desenvolvimento iOS' },
+                { id: 'gP7UrsXDpFU', title: 'Swift Completo' }
+            ],
+            kotlin: [
+                { id: 'F6GSC-jfIAM', title: 'Kotlin para Iniciantes' },
+                { id: 'EExNePv9qO4', title: 'Kotlin Android' },
+                { id: 'IQL3PnQnN1w', title: 'Kotlin Completo' }
+            ]
+        };
+
+        // YouTube Data API key (replace with your own key)
+        // Get an API key at https://console.cloud.google.com/apis/credentials
+        // and enable the YouTube Data API v3 for your project.
+        const YOUTUBE_API_KEY = 'AIzaSyAWVE_THifRchrblHH4yiOLkTz4C_AXxqY';
+
+        const countries = [
+            'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+            'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+            'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Costa Rica','Côte d\'Ivoire','Croatia','Cuba','Cyprus','Czech Republic',
+            'Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic','East Timor','Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+            'Fiji','Finland','France','Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana','Haiti','Honduras','Hungary',
+            'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kiribati','Kosovo','Kuwait','Kyrgyzstan',
+            'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg','Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+            'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway','Oman','Pakistan','Palau','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal','Qatar','Republic of the Congo','Romania','Russia','Rwanda',
+            'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+            'Taiwan','Tajikistan','Tanzania','Thailand','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu','Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan','Vanuatu','Vatican City','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe'
+        ];
+
+        const countryLanguageSettings = {
+            'Afghanistan': { code: 'en', queryTerm: 'programming' },
+            'Albania': { code: 'en', queryTerm: 'programming' },
+            'Algeria': { code: 'ar', queryTerm: 'برمجة' },
+            'Andorra': { code: 'ca', queryTerm: 'programació' },
+            'Angola': { code: 'pt', queryTerm: 'programação' },
+            'Antigua and Barbuda': { code: 'en', queryTerm: 'programming' },
+            'Argentina': { code: 'es', queryTerm: 'programación' },
+            'Armenia': { code: 'en', queryTerm: 'programming' },
+            'Australia': { code: 'en', queryTerm: 'programming' },
+            'Austria': { code: 'de', queryTerm: 'programmierung' },
+            'Azerbaijan': { code: 'en', queryTerm: 'programming' },
+            'Bahamas': { code: 'en', queryTerm: 'programming' },
+            'Bahrain': { code: 'ar', queryTerm: 'برمجة' },
+            'Bangladesh': { code: 'bn', queryTerm: 'প্রোগ্রামিং' },
+            'Barbados': { code: 'en', queryTerm: 'programming' },
+            'Belarus': { code: 'ru', queryTerm: 'программирование' },
+            'Belgium': { code: 'fr', queryTerm: 'programmation' },
+            'Belize': { code: 'en', queryTerm: 'programming' },
+            'Benin': { code: 'fr', queryTerm: 'programmation' },
+            'Bhutan': { code: 'en', queryTerm: 'programming' },
+            'Bolivia': { code: 'es', queryTerm: 'programación' },
+            'Bosnia and Herzegovina': { code: 'bs', queryTerm: 'programiranje' },
+            'Botswana': { code: 'en', queryTerm: 'programming' },
+            'Brazil': { code: 'pt', queryTerm: 'programação' },
+            'Brunei': { code: 'ms', queryTerm: 'pengaturcaraan' },
+            'Bulgaria': { code: 'bg', queryTerm: 'програмиране' },
+            'Burkina Faso': { code: 'fr', queryTerm: 'programmation' },
+            'Burundi': { code: 'fr', queryTerm: 'programmation' },
+            'Cabo Verde': { code: 'pt', queryTerm: 'programação' },
+            'Cambodia': { code: 'km', queryTerm: 'កម្មវិធី' },
+            'Cameroon': { code: 'fr', queryTerm: 'programmation' },
+            'Canada': { code: 'en', queryTerm: 'programming' },
+            'Central African Republic': { code: 'fr', queryTerm: 'programmation' },
+            'Chad': { code: 'fr', queryTerm: 'programmation' },
+            'Chile': { code: 'es', queryTerm: 'programación' },
+            'China': { code: 'zh', queryTerm: '编程' },
+            'Colombia': { code: 'es', queryTerm: 'programación' },
+            'Comoros': { code: 'fr', queryTerm: 'programmation' },
+            'Costa Rica': { code: 'es', queryTerm: 'programación' },
+            'Côte d\'Ivoire': { code: 'fr', queryTerm: 'programmation' },
+            'Croatia': { code: 'hr', queryTerm: 'programiranje' },
+            'Cuba': { code: 'es', queryTerm: 'programación' },
+            'Cyprus': { code: 'el', queryTerm: 'προγραμματισμός' },
+            'Czech Republic': { code: 'cs', queryTerm: 'programování' },
+            'Democratic Republic of the Congo': { code: 'fr', queryTerm: 'programmation' },
+            'Denmark': { code: 'da', queryTerm: 'programmering' },
+            'Djibouti': { code: 'fr', queryTerm: 'programmation' },
+            'Dominica': { code: 'en', queryTerm: 'programming' },
+            'Dominican Republic': { code: 'es', queryTerm: 'programación' },
+            'East Timor': { code: 'pt', queryTerm: 'programação' },
+            'Ecuador': { code: 'es', queryTerm: 'programación' },
+            'Egypt': { code: 'ar', queryTerm: 'برمجة' },
+            'El Salvador': { code: 'es', queryTerm: 'programación' },
+            'Equatorial Guinea': { code: 'es', queryTerm: 'programación' },
+            'Eritrea': { code: 'en', queryTerm: 'programming' },
+            'Estonia': { code: 'et', queryTerm: 'programmeerimine' },
+            'Eswatini': { code: 'en', queryTerm: 'programming' },
+            'Ethiopia': { code: 'am', queryTerm: 'ፕሮግራሚንግ' },
+            'Fiji': { code: 'en', queryTerm: 'programming' },
+            'Finland': { code: 'fi', queryTerm: 'ohjelmointi' },
+            'France': { code: 'fr', queryTerm: 'programmation' },
+            'Gabon': { code: 'fr', queryTerm: 'programmation' },
+            'Gambia': { code: 'en', queryTerm: 'programming' },
+            'Georgia': { code: 'en', queryTerm: 'programming' },
+            'Germany': { code: 'de', queryTerm: 'programmierung' },
+            'Ghana': { code: 'en', queryTerm: 'programming' },
+            'Greece': { code: 'el', queryTerm: 'προγραμματισμός' },
+            'Grenada': { code: 'en', queryTerm: 'programming' },
+            'Guatemala': { code: 'es', queryTerm: 'programación' },
+            'Guinea': { code: 'fr', queryTerm: 'programmation' },
+            'Guinea-Bissau': { code: 'pt', queryTerm: 'programação' },
+            'Guyana': { code: 'en', queryTerm: 'programming' },
+            'Haiti': { code: 'fr', queryTerm: 'programmation' },
+            'Honduras': { code: 'es', queryTerm: 'programación' },
+            'Hungary': { code: 'hu', queryTerm: 'programozás' },
+            'Iceland': { code: 'is', queryTerm: 'forritun' },
+            'India': { code: 'hi', queryTerm: 'प्रोग्रामिंग' },
+            'Indonesia': { code: 'id', queryTerm: 'pemrograman' },
+            'Iran': { code: 'fa', queryTerm: 'برنامه‌نویسی' },
+            'Iraq': { code: 'ar', queryTerm: 'برمجة' },
+            'Ireland': { code: 'en', queryTerm: 'programming' },
+            'Israel': { code: 'he', queryTerm: 'תכנות' },
+            'Italy': { code: 'it', queryTerm: 'programmazione' },
+            'Jamaica': { code: 'en', queryTerm: 'programming' },
+            'Japan': { code: 'ja', queryTerm: 'プログラミング' },
+            'Jordan': { code: 'ar', queryTerm: 'برمجة' },
+            'Kazakhstan': { code: 'ru', queryTerm: 'программирование' },
+            'Kenya': { code: 'en', queryTerm: 'programming' },
+            'Kiribati': { code: 'en', queryTerm: 'programming' },
+            'Kosovo': { code: 'sq', queryTerm: 'programim' },
+            'Kuwait': { code: 'ar', queryTerm: 'برمجة' },
+            'Kyrgyzstan': { code: 'ru', queryTerm: 'программирование' },
+            'Laos': { code: 'lo', queryTerm: 'ພາສາການໂປຣແກຣມ' },
+            'Latvia': { code: 'lv', queryTerm: 'programmēšana' },
+            'Lebanon': { code: 'ar', queryTerm: 'برمجة' },
+            'Lesotho': { code: 'en', queryTerm: 'programming' },
+            'Liberia': { code: 'en', queryTerm: 'programming' },
+            'Libya': { code: 'ar', queryTerm: 'برمجة' },
+            'Liechtenstein': { code: 'de', queryTerm: 'programmierung' },
+            'Lithuania': { code: 'lt', queryTerm: 'programavimas' },
+            'Luxembourg': { code: 'fr', queryTerm: 'programmation' },
+            'Madagascar': { code: 'fr', queryTerm: 'programmation' },
+            'Malawi': { code: 'en', queryTerm: 'programming' },
+            'Malaysia': { code: 'ms', queryTerm: 'pengaturcaraan' },
+            'Maldives': { code: 'en', queryTerm: 'programming' },
+            'Mali': { code: 'fr', queryTerm: 'programmation' },
+            'Malta': { code: 'en', queryTerm: 'programming' },
+            'Marshall Islands': { code: 'en', queryTerm: 'programming' },
+            'Mauritania': { code: 'ar', queryTerm: 'برمجة' },
+            'Mauritius': { code: 'en', queryTerm: 'programming' },
+            'Mexico': { code: 'es', queryTerm: 'programación' },
+            'Micronesia': { code: 'en', queryTerm: 'programming' },
+            'Moldova': { code: 'ro', queryTerm: 'programare' },
+            'Monaco': { code: 'fr', queryTerm: 'programmation' },
+            'Mongolia': { code: 'mn', queryTerm: 'програмчлал' },
+            'Montenegro': { code: 'sr', queryTerm: 'програмирање' },
+            'Morocco': { code: 'ar', queryTerm: 'برمجة' },
+            'Mozambique': { code: 'pt', queryTerm: 'programação' },
+            'Myanmar': { code: 'my', queryTerm: 'ပရိုဂရမ်းမင်း' },
+            'Namibia': { code: 'en', queryTerm: 'programming' },
+            'Nauru': { code: 'en', queryTerm: 'programming' },
+            'Nepal': { code: 'ne', queryTerm: 'प्रोग्रामिङ' },
+            'Netherlands': { code: 'nl', queryTerm: 'programmeren' },
+            'New Zealand': { code: 'en', queryTerm: 'programming' },
+            'Nicaragua': { code: 'es', queryTerm: 'programación' },
+            'Niger': { code: 'fr', queryTerm: 'programmation' },
+            'Nigeria': { code: 'en', queryTerm: 'programming' },
+            'North Korea': { code: 'ko', queryTerm: '프로그래밍' },
+            'North Macedonia': { code: 'mk', queryTerm: 'програмирање' },
+            'Norway': { code: 'no', queryTerm: 'programmering' },
+            'Oman': { code: 'ar', queryTerm: 'برمجة' },
+            'Pakistan': { code: 'ur', queryTerm: 'پروگرامنگ' },
+            'Palau': { code: 'en', queryTerm: 'programming' },
+            'Panama': { code: 'es', queryTerm: 'programación' },
+            'Papua New Guinea': { code: 'en', queryTerm: 'programming' },
+            'Paraguay': { code: 'es', queryTerm: 'programación' },
+            'Peru': { code: 'es', queryTerm: 'programación' },
+            'Philippines': { code: 'en', queryTerm: 'programming' },
+            'Poland': { code: 'pl', queryTerm: 'programowanie' },
+            'Portugal': { code: 'pt', queryTerm: 'programação' },
+            'Qatar': { code: 'ar', queryTerm: 'برمجة' },
+            'Republic of the Congo': { code: 'fr', queryTerm: 'programmation' },
+            'Romania': { code: 'ro', queryTerm: 'programare' },
+            'Russia': { code: 'ru', queryTerm: 'программирование' },
+            'Rwanda': { code: 'fr', queryTerm: 'programmation' },
+            'Saint Kitts and Nevis': { code: 'en', queryTerm: 'programming' },
+            'Saint Lucia': { code: 'en', queryTerm: 'programming' },
+            'Saint Vincent and the Grenadines': { code: 'en', queryTerm: 'programming' },
+            'Samoa': { code: 'en', queryTerm: 'programming' },
+            'San Marino': { code: 'it', queryTerm: 'programmazione' },
+            'Sao Tome and Principe': { code: 'pt', queryTerm: 'programação' },
+            'Saudi Arabia': { code: 'ar', queryTerm: 'برمجة' },
+            'Senegal': { code: 'fr', queryTerm: 'programmation' },
+            'Serbia': { code: 'sr', queryTerm: 'програмирање' },
+            'Seychelles': { code: 'en', queryTerm: 'programming' },
+            'Sierra Leone': { code: 'en', queryTerm: 'programming' },
+            'Singapore': { code: 'en', queryTerm: 'programming' },
+            'Slovakia': { code: 'sk', queryTerm: 'programovanie' },
+            'Slovenia': { code: 'sl', queryTerm: 'programiranje' },
+            'Solomon Islands': { code: 'en', queryTerm: 'programming' },
+            'Somalia': { code: 'so', queryTerm: 'barnaamij' },
+            'South Africa': { code: 'en', queryTerm: 'programming' },
+            'South Korea': { code: 'ko', queryTerm: '프로그래밍' },
+            'South Sudan': { code: 'en', queryTerm: 'programming' },
+            'Spain': { code: 'es', queryTerm: 'programación' },
+            'Sri Lanka': { code: 'si', queryTerm: 'ප්‍රෝග්‍රැමින්' },
+            'Sudan': { code: 'ar', queryTerm: 'برمجة' },
+            'Suriname': { code: 'nl', queryTerm: 'programmeren' },
+            'Sweden': { code: 'sv', queryTerm: 'programmering' },
+            'Switzerland': { code: 'de', queryTerm: 'programmierung' },
+            'Syria': { code: 'ar', queryTerm: 'برمجة' },
+            'Taiwan': { code: 'zh', queryTerm: '程式設計' },
+            'Tajikistan': { code: 'ru', queryTerm: 'программирование' },
+            'Tanzania': { code: 'sw', queryTerm: 'programu' },
+            'Thailand': { code: 'th', queryTerm: 'การเขียนโปรแกรม' },
+            'Togo': { code: 'fr', queryTerm: 'programmation' },
+            'Tonga': { code: 'en', queryTerm: 'programming' },
+            'Trinidad and Tobago': { code: 'en', queryTerm: 'programming' },
+            'Tunisia': { code: 'ar', queryTerm: 'برمجة' },
+            'Turkey': { code: 'tr', queryTerm: 'programlama' },
+            'Turkmenistan': { code: 'ru', queryTerm: 'программирование' },
+            'Tuvalu': { code: 'en', queryTerm: 'programming' },
+            'Uganda': { code: 'en', queryTerm: 'programming' },
+            'Ukraine': { code: 'uk', queryTerm: 'програмування' },
+            'United Arab Emirates': { code: 'ar', queryTerm: 'برمجة' },
+            'United Kingdom': { code: 'en', queryTerm: 'programming' },
+            'United States': { code: 'en', queryTerm: 'programming' },
+            'Uruguay': { code: 'es', queryTerm: 'programación' },
+            'Uzbekistan': { code: 'ru', queryTerm: 'программирование' },
+            'Vanuatu': { code: 'en', queryTerm: 'programming' },
+            'Vatican City': { code: 'it', queryTerm: 'programmazione' },
+            'Venezuela': { code: 'es', queryTerm: 'programación' },
+            'Vietnam': { code: 'vi', queryTerm: 'lập trình' },
+            'Yemen': { code: 'ar', queryTerm: 'برمجة' },
+            'Zambia': { code: 'en', queryTerm: 'programming' },
+            'Zimbabwe': { code: 'en', queryTerm: 'programming' }
+        };
+
+        function getCountryLanguageSettings(country) {
+            if (!country) {
+                return { code: 'en', queryTerm: 'programming' };
+            }
+            return countryLanguageSettings[country] || { code: 'en', queryTerm: 'programming' };
+        }
+
+        function populateCountrySelect() {
+            const select = document.getElementById('countrySelect');
+            if (!select) return;
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                select.appendChild(option);
+            });
+            const savedCountry = localStorage.getItem('selectedCountry');
+            if (savedCountry) {
+                select.value = savedCountry;
+            }
+        }
+
+        // Fetch videos from YouTube Data API (returns array of {id, title})
+        async function fetchYouTubeVideos(query, maxResults = 3, relevanceLanguage = 'en') {
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=${maxResults}&q=${encodeURIComponent(query)}&relevanceLanguage=${relevanceLanguage}&key=${YOUTUBE_API_KEY}`;
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`YouTube API error ${res.status}`);
+                const data = await res.json();
+                return (data.items || []).map(item => ({ id: item.id.videoId, title: item.snippet.title }));
+            } catch (err) {
+                console.warn('YouTube API fetch failed:', err);
+                return [];
+            }
+        }
+
+        // Script para manipular o menu
+        const menu = document.querySelector('.menu');
+        const catalogo = document.getElementById('catalogo');
+        const fecharMenu = document.querySelector('.fechar-menu a');
+        const videosContainer = document.getElementById('videosContainer');
+        const defaultMessage = document.querySelector('.default-message');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryButton = document.getElementById('clearHistory');
+        const historyPanel = document.querySelector('.history-panel');
+        const countrySelect = document.getElementById('countrySelect');
+        const languageWrapper = document.querySelector('.lingua');
+        const themeContainer = document.querySelector('.tema');
+        const contentContainer = document.querySelector('.conteudo');
+
+        function updateLanguageInputPlacement() {
+            if (!languageWrapper || !themeContainer || !contentContainer) return;
+            if (window.innerWidth <= 480) {
+                contentContainer.insertBefore(languageWrapper, defaultMessage);
+            } else {
+                themeContainer.appendChild(languageWrapper);
+            }
+        }
+
+        window.addEventListener('resize', updateLanguageInputPlacement);
+
+        // Vídeo destaque exibido por padrão
+        const featured = { id: 'rfscVS0vtik', title: 'Vídeo destaque: Python para Iniciantes' };
+        (function showFeatured() {
+            showVideoPanel();
+            renderVideosList([featured]);
+        })();
+
+        function getWatchedHistory() {
+            const history = localStorage.getItem('watchedHistory');
+            return history ? JSON.parse(history) : [];
+        }
+
+        function saveWatchedHistory(history) {
+            localStorage.setItem('watchedHistory', JSON.stringify(history));
+        }
+
+        function addToHistory(video) {
+            const history = getWatchedHistory();
+            const filtered = history.filter(item => item.id !== video.id);
+            filtered.unshift({ ...video, watchedAt: new Date().toISOString() });
+            const maxHistory = 12;
+            saveWatchedHistory(filtered.slice(0, maxHistory));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = getWatchedHistory();
+            historyList.innerHTML = '';
+            if (!history.length) {
+                historyList.innerHTML = '<div class="history-empty">Nenhum vídeo assistido ainda.</div>';
+                return;
+            }
+
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                const title = document.createElement('span');
+                title.textContent = `${item.title}`;
+                const watchAgain = document.createElement('button');
+                watchAgain.textContent = 'Rever';
+                watchAgain.addEventListener('click', () => {
+                    showVideoPanel();
+                    renderVideosList([item]);
+                    addToHistory(item);
+                });
+                historyItem.appendChild(title);
+                historyItem.appendChild(watchAgain);
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function showHistoryPanel() {
+            historyPanel.style.display = 'block';
+            videosContainer.style.display = 'none';
+            defaultMessage.style.display = 'none';
+            renderHistory();
+        }
+
+        function showVideoPanel() {
+            historyPanel.style.display = 'none';
+            if (videosContainer.children.length === 0) {
+                defaultMessage.style.display = 'block';
+                videosContainer.style.display = 'none';
+            } else {
+                defaultMessage.style.display = 'none';
+                videosContainer.style.display = 'grid';
+            }
+        }
+
+        function abrirMenu() {
+            catalogo.style.marginLeft = '0px';
+        }
+
+        function fecharMenuFunc() {
+            catalogo.style.marginLeft = '-250px';
+        }
+
+        function toggleMenu() {
+            if (catalogo.style.marginLeft === '0px') {
+                fecharMenuFunc();
+            } else {
+                abrirMenu();
+            }
+        }
+
+        function renderVideosList(list) {
+            videosContainer.innerHTML = '';
+            if (!list || list.length === 0) {
+                defaultMessage.style.display = 'block';
+                videosContainer.style.display = 'none';
+                return;
+            }
+
+            defaultMessage.style.display = 'none';
+            videosContainer.style.display = 'grid';
+
+            list.forEach(video => {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'video-item';
+                videoItem.innerHTML = `\n                    <iframe src="https://www.youtube.com/embed/${video.id}" allowfullscreen></iframe>\n                    <div class="video-title">${video.title}</div>\n                `;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'video-overlay';
+                overlay.textContent = 'Clique no vídeo para adicionar ao histórico';
+                overlay.addEventListener('click', () => {
+                    addToHistory(video);
+                    overlay.remove();
+                });
+                videoItem.appendChild(overlay);
+
+                videosContainer.appendChild(videoItem);
+            });
+        }
+
+        async function exibirVideos(linguagem) {
+            if (linguagem === 'history') {
+                showHistoryPanel();
+                fecharMenuFunc();
+                return;
+            }
+
+            showVideoPanel();
+            const countrySetting = getCountryLanguageSettings(countrySelect?.value);
+            const query = `${linguagem} course ${countrySetting.queryTerm}`;
+
+            // try YouTube API if API key is set
+            if (YOUTUBE_API_KEY && YOUTUBE_API_KEY !== 'YOUR_API_KEY_HERE') {
+                const results = await fetchYouTubeVideos(query, 6, countrySetting.code);
+                if (results && results.length > 0) {
+                    renderVideosList(results);
+                    fecharMenuFunc();
+                    return;
+                }
+                // if API failed or returned empty, fall through to local
+            }
+
+            // fallback to local list
+            const videosLinguagem = videos[linguagem] || [];
+            renderVideosList(videosLinguagem);
+            fecharMenuFunc();
+        }
+
+        // Eventos dos itens do catálogo
+        const linksCatalogo = document.querySelectorAll('#catalogo a[data-lang]');
+        linksCatalogo.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const linguagem = this.getAttribute('data-lang');
+                exibirVideos(linguagem);
+            });
+
+            link.addEventListener('touchend', function(event) {
+                event.preventDefault();
+                const linguagem = this.getAttribute('data-lang');
+                exibirVideos(linguagem);
+            });
+        });
+
+        // Eventos do menu
+        menu.addEventListener('click', function(event) {
+            event.preventDefault();
+            toggleMenu();
+        });
+
+        menu.addEventListener('touchend', function(event) {
+            event.preventDefault();
+            toggleMenu();
+        });
+
+        // Eventos de limpar histórico
+        clearHistoryButton.addEventListener('click', function() {
+            saveWatchedHistory([]);
+            renderHistory();
+        });
+
+        if (countrySelect) {
+            countrySelect.addEventListener('change', function() {
+                localStorage.setItem('selectedCountry', this.value);
+            });
+        }
+
+        // Eventos de fechar
+        if (fecharMenu) {
+            fecharMenu.addEventListener('click', function(event) {
+                event.preventDefault();
+                fecharMenuFunc();
+            });
+
+            fecharMenu.addEventListener('touchend', function(event) {
+                event.preventDefault();
+                fecharMenuFunc();
+            });
+        }
+
+        populateCountrySelect();
+        updateLanguageInputPlacement();
+        renderHistory();
+    </script>
 </body>
 </html>
