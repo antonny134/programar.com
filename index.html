@@ -497,23 +497,113 @@
             <li><a href="#" data-lang="swift">Swift</a></li>
             <li><a href="#" data-lang="kotlin">Kotlin</a></li>
         </ul>
-        <div class="sites">
-            <h3>Videos Úteis para Aprender Programação</h3>
-            <ul>
-                <li><a href="https://www.youtube.com/c/CursoEmVideo" target="_blank">Curso em Vídeo</a></li>
-                <li><a href="https://www.youtube.com/c/LoianeGroner" target="_blank">Loiane Groner</a></li>
-                <li><a href="https://www.youtube.com/c/ProgramaçãoDinâmica" target="_blank">Programação Dinâmica</a></li>
-                <li><a href="https://www.youtube.com/c/DevAprender" target="_blank">Dev Aprender</a></li>
-                <li><a href="https://www.youtube.com/c/CFBCursos" target="_blank">CFB Cursos</a></li>
-                <li><a href="https://www.youtube.com/c/MatheusBattisti" target="_blank">Matheus Battisti</a></li>
-                <li><a href="https://www.youtube.com/c/CodeWithHarry" target="_blank">Code With Harry (Inglês)</a></li>
-                <li><a href="https://www.youtube.com/c/TheNetNinja" target="_blank">The Net Ninja (Inglês)</a></li>
-            </ul>
-        </div>
+<div class="sites">
+    <h3>Videos Úteis para Aprender Programação</h3>
+
+    <ul>
+
+        <li><a href="#">Curso em Vídeo</a></li>
+
+        <li><a href="#">Loiane Groner</a></li>
+
+        <li><a href="#">Programação Dinâmica</a></li>
+
+        <li><a href="#">Dev Aprender</a></li>
+
+        <li><a href="#">CFB Cursos</a></li>
+
+        <li><a href="#">Matheus Battisti</a></li>
+
+        <li><a href="#">Code With Harry</a></li>
+
+        <li><a href="#">The Net Ninja</a></li>
+
+    </ul>
+</div>
         <div class="catalog-history">
             <h3>Histórico</h3>
-            <a href="#" data-lang="history">Ver histórico</a>
+            <a href="#" data-lang="history">
+                <i class="bi bi-clock"></i>
+                <span>Histórico</span>
+            </a>
         </div>
+        <!--curso-->
+        <div class="curso">
+            <h3>Cursos Recomendados</h3>
+            <ul>
+                <li><a href="#">Curso Completo de Python</a></li>
+                <li><a href="#">JavaScript do Zero ao Avançado</a></li>
+                <li><a href="#">Java para Iniciantes</a></li>
+                <li><a href="#">C# para Todos</a></li>
+                <li><a href="#">C++ Essencial</a></li>
+                <li><a href="#">Ruby on Rails Guia Completo</a></li>
+                <li><a href="#">Go Lang para Iniciantes</a></li>
+                <li><a href="#">Swift Desenvolvimento iOS</a></li>
+                <li><a href="#">Kotlin Android do Zero</a></li>
+            </ul>
+        </div>
+        <!--online-->
+       <div class="on-line">
+    <h3>Plataformas Online</h3>
+
+    <ul>
+
+        <li>
+            <a href="https://www.udemy.com/" target="_blank">
+                Udemy
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.coursera.org/" target="_blank">
+               <span> Coursera</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.edx.org/" target="_blank">
+               <span> edX</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.codecademy.com/" target="_blank">
+               <span> Codecademy</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.freecodecamp.org/" target="_blank">
+               <span> freeCodeCamp</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.khanacademy.org/" target="_blank">
+               <span> Khan Academy</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.pluralsight.com/" target="_blank">
+                <span>Pluralsight</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.linkedin.com/learning/" target="_blank">
+               <span> LinkedIn Learning</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="https://www.alura.com.br/" target="_blank">
+              <span>  Alura</span>
+            </a>
+        </li>
+
+    </ul>
+</div>
     </nav>
     
     <!-- Área de conteúdo com vídeos -->
@@ -1058,6 +1148,150 @@
         populateCountrySelect();
         updateLanguageInputPlacement();
         renderHistory();
+      // Abrir vídeos úteis dentro da tela
+    const linksSites = document.querySelectorAll('.sites a');
+// canais úteis
+const canaisYoutube = {
+    "Curso em Vídeo": "Curso em Vídeo programação",
+    "Loiane Groner": "Loiane Groner programação",
+    "Programação Dinâmica": "Programação Dinâmica",
+    "Dev Aprender": "Dev Aprender programação",
+    "CFB Cursos": "CFB Cursos programação",
+    "Matheus Battisti": "Matheus Battisti programação",
+    "Code With Harry": "Code With Harry programming",
+    "The Net Ninja": "The Net Ninja programming"
+};
+
+// buscar vídeo na API do YouTube
+async function buscarVideoCanal(nomeCanal){
+
+    const countrySetting = getCountryLanguageSettings(countrySelect?.value);
+
+    // pesquisa otimizada
+    const busca =
+    `${nomeCanal} ${countrySetting.queryTerm} tutorial de programação passo a passo`;
+
+    const url =
+    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=long&maxResults=6&q=${encodeURIComponent(busca)}&relevanceLanguage=${countrySetting.code}&key=${YOUTUBE_API_KEY}`;
+
+    try{
+
+        videosContainer.innerHTML = `
+            <div class="default-message">
+                Procurando vídeos passo a passo...
+            </div>
+        `;
+
+       const resposta = await fetch(url);
+
+if(!resposta.ok){
+    throw new Error("API bloqueada");
+}
+
+const dados = await resposta.json();
+        if(dados.items && dados.items.length > 0){
+
+            const listaVideos = dados.items.map(video => ({
+
+                id: video.id.videoId,
+
+                title: video.snippet.title
+
+            }));
+
+            renderizarVideosPassoAPasso(listaVideos);
+
+        }else{
+
+            videosContainer.innerHTML = `
+                <div class="default-message">
+                    Nenhum tutorial encontrado.
+                </div>
+            `;
+        }
+
+    }catch(erro){
+
+        console.log("Erro API YouTube:", erro);
+
+        videosContainer.innerHTML = `
+            <div class="default-message">
+                Erro ao carregar vídeos.
+            </div>
+        `;
+    }
+}
+function renderizarVideosPassoAPasso(lista){
+
+    videosContainer.innerHTML = '';
+
+    lista.forEach(video => {
+
+        const videoItem = document.createElement('div');
+
+        videoItem.className = 'video-item';
+
+        videoItem.innerHTML = `
+
+            <iframe
+                src="https://www.youtube.com/embed/${video.id}"
+                allowfullscreen>
+            </iframe>
+
+            <div class="video-title">
+                ${video.title}
+            </div>
+
+            <div class="video-actions">
+
+                <button>
+                    Assistir Aula
+                </button>
+
+            </div>
+
+        `;
+
+        const botao =
+        videoItem.querySelector('button');
+
+        botao.addEventListener('click', () => {
+
+            addToHistory(video);
+
+        });
+
+        videosContainer.appendChild(videoItem);
+
+    });
+
+    defaultMessage.style.display = 'none';
+
+    videosContainer.style.display = 'grid';
+
+    historyPanel.style.display = 'none';
+
+    fecharMenuFunc();
+}
+
+// LINKS DOS CANAIS
+const linksites =
+document.querySelectorAll('.sites a');
+
+linksites.forEach(link => {
+
+    link.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const nomeCanal =
+        this.textContent.trim();
+
+        buscarVideoCanal(nomeCanal);
+
+    });
+
+});
     </script>
 </body>
 </html>
